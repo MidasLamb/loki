@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
+//go:build linux
 // +build linux
 
 package fsnotify
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
@@ -133,7 +133,8 @@ func (w *Watcher) Remove(name string) error {
 
 	// Remove it from inotify.
 	if !ok {
-		return fmt.Errorf("can't remove non-existent inotify watch for: %s", name)
+		// If it doesn't exist, we can already consider it removed, leaving no work to do.
+		return nil
 	}
 
 	// We successfully removed the watch if InotifyRmWatch doesn't return an
